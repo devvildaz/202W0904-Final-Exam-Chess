@@ -171,7 +171,7 @@ public class ChessGameBoard extends JPanel{
     public void initializeBoard(){
 				ChessGameBoard boardInstance = this;
 				HashMap<Integer, GamePieceGenerator<ChessGameBoard, Integer, Integer, Integer, ChessGamePiece>>	piecesMap =
-				 		new HashMap<Integer, GamePieceGenerator<ChessGameBoard, Integer, Integer, Integer, ChessGamePiece>>();
+				 		new HashMap<>();
 				piecesMap.put(-1, (board, row, col, color) -> new Pawn(boardInstance, row, col, color));
 
 				piecesMap.put(0, (board, row, col, color) -> new Rook(boardInstance, row, col, color));

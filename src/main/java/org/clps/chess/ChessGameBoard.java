@@ -195,10 +195,12 @@ public class ChessGameBoard extends JPanel{
                 ChessGamePiece pieceToAdd;
 								
 								switch(i) {
-									case 1, 6:
+									case 1:
+									case 6:
                     pieceToAdd = piecesMap.get(-1).apply( this, i, j, colorTarget );
 										break;
-									case 0, 7:
+									case 0:
+									case 7:
                     pieceToAdd = piecesMap.get(j).apply( this, i, j, colorTarget);
 										break;
 									default:

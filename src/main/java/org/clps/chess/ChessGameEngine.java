@@ -295,7 +295,7 @@ public class ChessGameEngine implements Serializable{
                         JOptionPane.ERROR_MESSAGE );
                 }
             }
-						firstClick = true;
+			firstClick = true;
         }
     }
 }

@@ -1,3 +1,4 @@
+package org.clps.chess;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 // -------------------------------------------------------------------------

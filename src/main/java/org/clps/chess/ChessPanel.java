@@ -1,3 +1,4 @@
+package org.clps.chess;
 import java.awt.*;
 import javax.swing.*;
 // -------------------------------------------------------------------------

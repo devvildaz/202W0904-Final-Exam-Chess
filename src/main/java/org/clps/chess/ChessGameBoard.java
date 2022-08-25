@@ -1,9 +1,20 @@
+package org.clps.chess;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.Serializable;
 import java.awt.Color;
 import javax.swing.JPanel;
 import java.awt.GridLayout;
+
+
+@FunctionalInterface
+interface GamePieceGenerator<T, E, V, Y, Z> {
+	public Z apply(T board, E rowNum, V colNum, Y color);
+}
+
 // -------------------------------------------------------------------------
 /**
  * The panel that represents the Chess game board. Contains a few methods that
@@ -15,6 +26,7 @@ import java.awt.GridLayout;
  * @version 2010.11.17
  */
 public class ChessGameBoard extends JPanel{
+		static final long serialVersionUID = 12L;
     private BoardSquare[][] chessCells;
     private BoardListener   listener;
     // ----------------------------------------------------------
@@ -73,8 +85,8 @@ public class ChessGameBoard extends JPanel{
      *
      * @return ArrayList<GamePiece> the pieces
      */
-    public ArrayList<ChessGamePiece> getAllWhitePieces(){
-        ArrayList<ChessGamePiece> whitePieces = new ArrayList<ChessGamePiece>();
+    public List<ChessGamePiece> getAllWhitePieces(){
+        ArrayList<ChessGamePiece> whitePieces = new ArrayList<>();
         for ( int i = 0; i < 8; i++ ){
             for ( int j = 0; j < 8; j++ ){
                 if ( chessCells[i][j].getPieceOnSquare() != null
@@ -92,8 +104,8 @@ public class ChessGameBoard extends JPanel{
      *
      * @return ArrayList<GamePiece> the pieces
      */
-    public ArrayList<ChessGamePiece> getAllBlackPieces(){
-        ArrayList<ChessGamePiece> blackPieces = new ArrayList<ChessGamePiece>();
+    public List<ChessGamePiece> getAllBlackPieces(){
+        ArrayList<ChessGamePiece> blackPieces = new ArrayList<>();
         for ( int i = 0; i < 8; i++ ){
             for ( int j = 0; j < 8; j++ ){
                 if ( chessCells[i][j].getPieceOnSquare() != null
@@ -148,51 +160,59 @@ public class ChessGameBoard extends JPanel{
             }
         }
         repaint();
-        //revalidate();
         // only the combination of these two calls work...*shrug*
     }
+		
+
     /**
      * (Re)initializes this ChessGameBoard to its default layout with all 32
      * pieces added.
      */
     public void initializeBoard(){
+				ChessGameBoard boardInstance = this;
+				HashMap<Integer, GamePieceGenerator<ChessGameBoard, Integer, Integer, Integer, ChessGamePiece>>	piecesMap =
+				 	new HashMap<Integer, GamePieceGenerator<ChessGameBoard, Integer, Integer, Integer, ChessGamePiece>>()
+				{
+					private static final long serialVersionUID = -111L;
+					{
+						put(-1, (board, row, col, color) -> new Pawn(boardInstance, row, col, color));
+
+						put(0, (board, row, col, color) -> new Rook(boardInstance, row, col, color));
+						put(7, (board, row, col, color) -> new Rook(boardInstance, row, col, color));
+
+						put(1, (board, row, col, color) -> new Knight(boardInstance, row, col, color));
+						put(6, (board, row, col, color) -> new Knight(boardInstance, row, col, color));
+
+						put(2, (board, row, col, color) -> new Bishop(boardInstance, row, col, color));
+						put(5, (board, row, col, color) -> new Bishop(boardInstance, row, col, color));
+
+						put(3, (board, row, col, color) -> new King(boardInstance, row, col, color));
+						put(4, (board, row, col, color) -> new Queen(boardInstance, row, col, color));
+					}
+				};
         resetBoard( false );
         for ( int i = 0; i < chessCells.length; i++ ){
+						int colorTarget = ChessGamePiece.WHITE;
+						if ( i < 4 ){
+							colorTarget = ChessGamePiece.BLACK;
+						} 
             for ( int j = 0; j < chessCells[0].length; j++ ){
                 ChessGamePiece pieceToAdd;
-                if ( i == 1 ) // black pawns
-                {
-                    pieceToAdd = new Pawn( this, i, j, ChessGamePiece.BLACK );
-                }
-                else if ( i == 6 ) // white pawns
-                {
-                    pieceToAdd = new Pawn( this, i, j, ChessGamePiece.WHITE );
-                }
-                else if ( i == 0 || i == 7 ) // main rows
-                {
-                    int colNum =
-                        i == 0 ? ChessGamePiece.BLACK : ChessGamePiece.WHITE;
-                    if ( j == 0 || j == 7 ){
-                        pieceToAdd = new Rook( this, i, j, colNum );
-                    }
-                    else if ( j == 1 || j == 6 ){
-                        pieceToAdd = new Knight( this, i, j, colNum );
-                    }
-                    else if ( j == 2 || j == 5 ){
-                        pieceToAdd = new Bishop( this, i, j, colNum );
-                    }
-                    else if ( j == 3 ){
-                        pieceToAdd = new King( this, i, j, colNum );
-                    }
-                    else
-                    {
-                        pieceToAdd = new Queen( this, i, j, colNum );
-                    }
-                }
-                else
-                {
-                    pieceToAdd = null;
-                }
+								
+								switch(i) {
+									case 1:
+									case 6:
+                    pieceToAdd = piecesMap.get(-1).apply( this, i, j, colorTarget );
+										break;
+									case 0:
+									case 7:
+                    pieceToAdd = piecesMap.get(j).apply( this, i, j, colorTarget);
+										break;
+									default:
+										pieceToAdd = null;
+								}
+								
+
                 chessCells[i][j] = new BoardSquare( i, j, pieceToAdd );
                 if ( ( i + j ) % 2 == 0 ){
                     chessCells[i][j].setBackground( Color.WHITE );
@@ -232,8 +252,9 @@ public class ChessGameBoard extends JPanel{
      * @version 2010.11.16
      */
     private class BoardListener
-        implements MouseListener
+				implements MouseListener, Serializable
     {
+				static final long serialVersionUID = 420L;
         /**
          * Do an action when the left mouse button is clicked.
          *

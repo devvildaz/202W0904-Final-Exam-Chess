@@ -1,3 +1,4 @@
+package org.clps.chess;
 import java.awt.Component;
 import java.awt.event.*;
 import javax.swing.*;
@@ -13,9 +14,11 @@ import javax.swing.*;
 public class ChessMenuBar
     extends JMenuBar{
     // ----------------------------------------------------------
+	  static final long serialVersionUID = 421L;
     /**
      * Create a new ChessMenuBar object.
      */
+		
     public ChessMenuBar(){
         String[] menuCategories = { "File", "Options", "Help" };
         String[] menuItemLists =
@@ -99,8 +102,12 @@ public class ChessMenuBar
             possibleFrame = possibleFrame.getParent();
         }
         JFrame frame = (JFrame)possibleFrame;
-        frame.setVisible( false );
-        frame.dispose();
+				if(frame != null) {
+        	frame.setVisible( false );
+        	frame.dispose();
+				} else {
+					throw new IllegalStateException("frame is null, reset the application");
+				}
     }
     /**
      * Takes an appropriate action if the toggle graveyard button is clicked.

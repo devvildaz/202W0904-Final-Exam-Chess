@@ -1,8 +1,5 @@
 package org.clps.chess;
 import javax.swing.ImageIcon;
-
-import org.clps.chess.enumeration.PieceColorEnum;
-
 import java.util.ArrayList;
 import java.util.function.IntUnaryOperator;
 // -------------------------------------------------------------------------

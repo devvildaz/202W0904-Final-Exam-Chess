@@ -171,25 +171,20 @@ public class ChessGameBoard extends JPanel{
     public void initializeBoard(){
 				ChessGameBoard boardInstance = this;
 				HashMap<Integer, GamePieceGenerator<ChessGameBoard, Integer, Integer, Integer, ChessGamePiece>>	piecesMap =
-				 	new HashMap<Integer, GamePieceGenerator<ChessGameBoard, Integer, Integer, Integer, ChessGamePiece>>()
-				{
-					private static final long serialVersionUID = -111L;
-					{
-						put(-1, (board, row, col, color) -> new Pawn(boardInstance, row, col, color));
+				 		new HashMap<Integer, GamePieceGenerator<ChessGameBoard, Integer, Integer, Integer, ChessGamePiece>>();
+				piecesMap.put(-1, (board, row, col, color) -> new Pawn(boardInstance, row, col, color));
 
-						put(0, (board, row, col, color) -> new Rook(boardInstance, row, col, color));
-						put(7, (board, row, col, color) -> new Rook(boardInstance, row, col, color));
+				piecesMap.put(0, (board, row, col, color) -> new Rook(boardInstance, row, col, color));
+				piecesMap.put(7, (board, row, col, color) -> new Rook(boardInstance, row, col, color));
 
-						put(1, (board, row, col, color) -> new Knight(boardInstance, row, col, color));
-						put(6, (board, row, col, color) -> new Knight(boardInstance, row, col, color));
+				piecesMap.put(1, (board, row, col, color) -> new Knight(boardInstance, row, col, color));
+				piecesMap.put(6, (board, row, col, color) -> new Knight(boardInstance, row, col, color));
 
-						put(2, (board, row, col, color) -> new Bishop(boardInstance, row, col, color));
-						put(5, (board, row, col, color) -> new Bishop(boardInstance, row, col, color));
+				piecesMap.put(2, (board, row, col, color) -> new Bishop(boardInstance, row, col, color));
+				piecesMap.put(5, (board, row, col, color) -> new Bishop(boardInstance, row, col, color));
 
-						put(3, (board, row, col, color) -> new King(boardInstance, row, col, color));
-						put(4, (board, row, col, color) -> new Queen(boardInstance, row, col, color));
-					}
-				};
+				piecesMap.put(3, (board, row, col, color) -> new King(boardInstance, row, col, color));
+				piecesMap.put(4, (board, row, col, color) -> new Queen(boardInstance, row, col, color));
         resetBoard( false );
         for ( int i = 0; i < chessCells.length; i++ ){
 						int colorTarget = ChessGamePiece.WHITE;
